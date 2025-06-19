@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice {{ invoice.invoice_number }}</title>
+  </head>
+  <body>
+    <div class="header">
+      <h1>INVOICE</h1>
+      <div class="subtitle">
+        {{ user.company_name|default:user.get_full_name }}
+      </div>
+    </div>
+
+    <div class="invoice-info">
+      <div class="left">
+        <div class="bill-to">
+          <h3>Bill To:</h3>
+          <p><strong>{{ client.name }}</strong></p>
+          {% if client.company_name %}
+          <p>{{ client.company_name }}</p>
+          {% endif %} {% if client.address %}
+          <p>{{ client.address|linebreaks }}</p>
+          {% endif %}
+          <p>Email: {{ client.email }}</p>
+          {% if client.phone_number %}
+          <p>Phone: {{ client.phone_number }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="invoice-details">
+          <h3>Invoice Details</h3>
+          <p><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</p>
+          <p>
+            <strong>Issue Date:</strong> {{ invoice.issue_date|date:"F d, Y" }}
+          </p>
+          <p><strong>Due Date:</strong> {{ invoice.due_date|date:"F d, Y" }}</p>
+          {% if invoice.project %}
+          <p><strong>Project:</strong> {{ invoice.project.name }}</p>
+          {% endif %}
+          <p><strong>Status:</strong> {{ invoice.get_status_display }}</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th class="description">Description</th>
+          <th class="quantity">Quantity</th>
+          <th class="rate">Rate</th>
+          <th class="amount">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td class="description">{{ item.description }}</td>
+          <td class="quantity">{{ item.quantity }}</td>
+          <td class="rate">${{ item.unit_price }}</td>
+          <td class="amount">${{ item.total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <table>
+        <tr>
+          <td class="label">Subtotal:</td>
+          <td class="amount">${{ invoice.subtotal }}</td>
+        </tr>
+        {% if invoice.tax_rate > 0 %}
+        <tr>
+          <td class="label">Tax ({{ invoice.tax_rate }}%):</td>
+          <td class="amount">${{ invoice.tax_amount }}</td>
+        </tr>
+        {% endif %} {% if invoice.discount_rate > 0 %}
+        <tr>
+          <td class="label">Discount ({{ invoice.discount_rate }}%):</td>
+          <td class="amount">-${{ invoice.discount_amount }}</td>
+        </tr>
+        {% endif %}
+        <tr class="total-row">
+          <td class="label">Total:</td>
+          <td class="amount">${{ invoice.total_amount }}</td>
+        </tr>
+      </table>
+    </div>
+
+    {% if invoice.notes %}
+    <div class="notes">
+      <h3>Notes</h3>
+      <p>{{ invoice.notes|linebreaks }}</p>
+    </div>
+    {% endif %} {% if invoice.terms_conditions %}
+    <div class="notes">
+      <h3>Terms & Conditions</h3>
+      <p>{{ invoice.terms_conditions|linebreaks }}</p>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+      <p>Thank you for your business!</p>
+      <p>Generated on {{ generated_date }}</p>
+    </div>
+  </body>
+</html>
