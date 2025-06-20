@@ -81,8 +81,8 @@ class InvoiceCreateFromTimeEntriesSerializer(serializers.Serializer):
     """
     Serializer for creating invoices from time entries.
     """
-    client = serializers.PrimaryKeyRelatedField(queryset=None)
-    project = serializers.PrimaryKeyRelatedField(queryset=None, required=False, allow_null=True)
+    client = serializers.PrimaryKeyRelatedField(queryset=[])
+    project = serializers.PrimaryKeyRelatedField(queryset=[], required=False, allow_null=True)
     start_date = serializers.DateField()
     end_date = serializers.DateField()
     issue_date = serializers.DateField(required=False)
@@ -97,8 +97,10 @@ class InvoiceCreateFromTimeEntriesSerializer(serializers.Serializer):
         # Set querysets based on the current user
         if 'context' in kwargs and 'request' in kwargs['context']:
             user = kwargs['context']['request'].user
-            self.fields['client'].queryset = user.clients.all()
-            self.fields['project'].queryset = user.projects.all()
+            from clients.models import Client
+            from projects.models import Project
+            self.fields['client'].queryset = Client.objects.filter(user=user)
+            self.fields['project'].queryset = Project.objects.filter(user=user)
     
     def validate(self, attrs):
         if attrs['start_date'] > attrs['end_date']:

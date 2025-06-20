@@ -5,6 +5,7 @@ Django settings for invoice_generator project.
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,16 +74,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'invoice_generator.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='invoice_generator'),
-        'USER': config('DB_USER', default='postgres'),
-        'PASSWORD': config('DB_PASSWORD', default='postgres'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+DATABASE_URL = config('DATABASE_URL', default='sqlite:///db.sqlite3')
+
+if DATABASE_URL.startswith('sqlite://'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -168,4 +172,9 @@ STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', default='')
 STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
 
 # Custom user model
-AUTH_USER_MODEL = 'core.User' 
+AUTH_USER_MODEL = 'core.User'
+
+# Django Admin customization
+ADMIN_SITE_HEADER = "Invoice Generator Administration"
+ADMIN_SITE_TITLE = "Invoice Generator Admin"
+ADMIN_INDEX_TITLE = "Welcome to Invoice Generator Administration" 

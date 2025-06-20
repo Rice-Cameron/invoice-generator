@@ -1,1 +1,1 @@
- 
+# This file can be empty - Django will work fine without it 

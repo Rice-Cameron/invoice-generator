@@ -5,12 +5,43 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
+# Customize the admin site
+admin.site.site_header = getattr(settings, 'ADMIN_SITE_HEADER', 'Invoice Generator Administration')
+admin.site.site_title = getattr(settings, 'ADMIN_SITE_TITLE', 'Invoice Generator Admin')
+admin.site.index_title = getattr(settings, 'ADMIN_INDEX_TITLE', 'Welcome to Invoice Generator Administration')
+
+def root_view(request):
+    """Root view that shows homepage or API info based on Accept header."""
+    if request.headers.get('Accept') == 'application/json':
+        # Return JSON for API clients
+        return JsonResponse({
+            'message': 'Time-Tracked Invoice Generator API',
+            'version': '1.0.0',
+            'endpoints': {
+                'admin': '/admin/',
+                'api': '/api/',
+                'authentication': '/api/token/',
+                'clients': '/api/clients/',
+                'projects': '/api/projects/',
+                'time_entries': '/api/time-entries/',
+                'invoices': '/api/invoices/',
+                'stripe': '/api/stripe/',
+            },
+            'documentation': 'See README.md for API documentation'
+        })
+    else:
+        # Show HTML homepage for web browsers
+        return render(request, 'home.html')
+
 urlpatterns = [
+    path('', root_view, name='root'),
     path('admin/', admin.site.urls),
     
     # JWT Authentication

@@ -124,6 +124,105 @@ A comprehensive Django-based backend service that allows freelancers to manage c
    python manage.py runserver
    ```
 
+### Troubleshooting
+
+#### Python Version Issues
+
+This project requires **Python 3.11 or higher**. If you encounter version-related errors:
+
+1. **Check your Python version:**
+
+   ```bash
+   python --version
+   ```
+
+2. **If using Python 3.9 or earlier, upgrade to Python 3.11:**
+
+   ```bash
+   # On macOS with Homebrew
+   brew install python@3.11
+
+   # Create virtual environment with Python 3.11
+   python3.11 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+#### Virtual Environment Issues
+
+If you get "Couldn't import Django" errors even after activating your virtual environment:
+
+1. **Check if virtual environment is activated:**
+
+   ```bash
+   which python
+   # Should show: /path/to/your/project/venv/bin/python
+   ```
+
+2. **If you have Python aliases that override your venv:**
+
+   ```bash
+   # Check for aliases
+   type python
+
+   # If it shows an alias, remove it
+   unalias python
+
+   # Reactivate your virtual environment
+   deactivate
+   source venv/bin/activate
+   ```
+
+3. **Verify Django is installed in your venv:**
+
+   ```bash
+   python -m django --version
+   # Should show: 5.0.2
+   ```
+
+4. **If issues persist, recreate the virtual environment:**
+   ```bash
+   deactivate
+   rm -rf venv
+   python3.11 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+#### Database Issues
+
+If you encounter database connection errors:
+
+1. **For SQLite (default for development):**
+
+   - The project is configured to use SQLite by default
+   - No additional setup required
+
+2. **For PostgreSQL:**
+   - Install PostgreSQL
+   - Update your `.env` file with database credentials
+   - Ensure PostgreSQL service is running
+
+#### Migration Issues
+
+If you encounter migration errors:
+
+1. **Reset migrations (WARNING: This will delete your database):**
+
+   ```bash
+   rm db.sqlite3  # Only for SQLite
+   find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+2. **If Django internal files are missing:**
+   ```bash
+   pip install --force-reinstall Django==5.0.2
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
 ## 🔧 Configuration
 
 ### Environment Variables
