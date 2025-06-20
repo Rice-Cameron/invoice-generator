@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Documentation - Invoice Generator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: #f8f9fa;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .nav {
+        background: white;
+        padding: 1rem 0;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav ul {
+        list-style: none;
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+      }
+
+      .nav a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .nav a:hover {
+        background: #f0f2ff;
+      }
+
+      .section {
+        background: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .section h2 {
+        color: #667eea;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #f0f2ff;
+        padding-bottom: 0.5rem;
+      }
+
+      .endpoint {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+      }
+
+      .endpoint-header {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .method {
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+      }
+
+      .method.get {
+        background: #d4edda;
+        color: #155724;
+      }
+      .method.post {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .method.put {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .method.delete {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .endpoint-url {
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 1rem;
+        color: #495057;
+      }
+
+      .endpoint-body {
+        padding: 1.5rem;
+      }
+
+      .endpoint h3 {
+        margin-bottom: 1rem;
+        color: #495057;
+      }
+
+      .endpoint p {
+        margin-bottom: 1rem;
+        color: #6c757d;
+      }
+
+      .code-block {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+      }
+
+      .auth-note {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: #856404;
+      }
+
+      .response-example {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.9rem;
+      }
+
+      .back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #667eea;
+        color: white;
+        padding: 1rem;
+        border-radius: 50%;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+      }
+
+      .back-to-top:hover {
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .nav ul {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .endpoint-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <h1>📚 API Documentation</h1>
+        <p>Complete guide to the Time-Tracked Invoice Generator API</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="nav">
+        <ul>
+          <li><a href="#authentication">🔐 Authentication</a></li>
+          <li><a href="#users">👤 Users</a></li>
+          <li><a href="#clients">👥 Clients</a></li>
+          <li><a href="#projects">📁 Projects</a></li>
+          <li><a href="#time-entries">⏱️ Time Entries</a></li>
+          <li><a href="#invoices">📄 Invoices</a></li>
+          <li><a href="#stripe">💳 Stripe</a></li>
+        </ul>
+      </nav>
+
+      <section id="authentication" class="section">
+        <h2>🔐 Authentication</h2>
+        <p>
+          This API uses JWT (JSON Web Tokens) for authentication. All endpoints
+          except registration require authentication.
+        </p>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/token/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Login</h3>
+            <p>Authenticate and receive access and refresh tokens.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "email": "user@example.com", "password": "your_password" }
+            </div>
+
+            <h4>Response:</h4>
+            <div class="response-example">
+              { "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...", "refresh":
+              "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." }
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/token/refresh/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Refresh Token</h3>
+            <p>Get a new access token using your refresh token.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">{ "refresh": "your_refresh_token" }</div>
+          </div>
+        </div>
+
+        <div class="auth-note">
+          <strong>Note:</strong> Include the access token in the Authorization
+          header for all authenticated requests:
+          <div class="code-block">Authorization: Bearer your_access_token</div>
+        </div>
+      </section>
+
+      <section id="users" class="section">
+        <h2>👤 Users</h2>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/register/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Register User</h3>
+            <p>Create a new user account.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "email": "user@example.com", "username": "username", "password":
+              "password123", "password2": "password123", "first_name": "John",
+              "last_name": "Doe" }
+            </div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/profile/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get User Profile</h3>
+            <p>Retrieve the current user's profile information.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <span class="endpoint-url">/api/profile/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Update User Profile</h3>
+            <p>Update the current user's profile information.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/change-password/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Change Password</h3>
+            <p>Change the current user's password.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "old_password": "current_password", "new_password":
+              "new_password", "new_password2": "new_password" }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/dashboard/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>User Dashboard</h3>
+            <p>Get dashboard statistics and overview data.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="clients" class="section">
+        <h2>👥 Clients</h2>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/clients/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>List Clients</h3>
+            <p>Get a list of all clients for the authenticated user.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/clients/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Client</h3>
+            <p>Create a new client.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "name": "Acme Corporation", "email": "contact@acme.com",
+              "phone": "+1-555-0123", "address": "123 Business St, City, State
+              12345", "tax_id": "12-3456789", "notes": "Important client" }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/clients/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Client Details</h3>
+            <p>Get detailed information about a specific client.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <span class="endpoint-url">/api/clients/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Update Client</h3>
+            <p>Update a client's information.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint-url">/api/clients/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Delete Client</h3>
+            <p>Delete a client (only if no related projects exist).</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" class="section">
+        <h2>📁 Projects</h2>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/projects/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>List Projects</h3>
+            <p>Get a list of all projects for the authenticated user.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/projects/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Project</h3>
+            <p>Create a new project.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "name": "Website Redesign", "client": 1, "description":
+              "Complete website redesign project", "hourly_rate": 75.00,
+              "status": "active" }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/projects/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Project Details</h3>
+            <p>Get detailed information about a specific project.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <span class="endpoint-url">/api/projects/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Update Project</h3>
+            <p>Update a project's information.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint-url">/api/projects/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Delete Project</h3>
+            <p>Delete a project (only if no time entries exist).</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url"
+              >/api/projects/by-client/{client_id}/</span
+            >
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Projects by Client</h3>
+            <p>Get all projects for a specific client.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="time-entries" class="section">
+        <h2>⏱️ Time Entries</h2>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/time-entries/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>List Time Entries</h3>
+            <p>Get a list of all time entries for the authenticated user.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/time-entries/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Time Entry</h3>
+            <p>Create a new time entry.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "project": 1, "date": "2024-01-15", "start_time": "09:00:00",
+              "end_time": "12:00:00", "description": "Worked on homepage
+              design", "billable": true }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/time-entries/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Time Entry Details</h3>
+            <p>Get detailed information about a specific time entry.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <span class="endpoint-url">/api/time-entries/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Update Time Entry</h3>
+            <p>Update a time entry's information.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint-url">/api/time-entries/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Delete Time Entry</h3>
+            <p>Delete a time entry.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/time-entries/bulk-create/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Bulk Create Time Entries</h3>
+            <p>Create multiple time entries at once.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "time_entries": [ { "project": 1, "date": "2024-01-15",
+              "start_time": "09:00:00", "end_time": "12:00:00", "description":
+              "Morning work" }, { "project": 1, "date": "2024-01-15",
+              "start_time": "13:00:00", "end_time": "17:00:00", "description":
+              "Afternoon work" } ] }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url"
+              >/api/time-entries/by-project/{project_id}/</span
+            >
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Time Entries by Project</h3>
+            <p>Get all time entries for a specific project.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/time-entries/summary/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Time Entry Summary</h3>
+            <p>Get summary statistics for time entries.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="invoices" class="section">
+        <h2>📄 Invoices</h2>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/invoices/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>List Invoices</h3>
+            <p>Get a list of all invoices for the authenticated user.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/invoices/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Invoice</h3>
+            <p>Create a new invoice manually.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "client": 1, "project": 1, "issue_date": "2024-01-15",
+              "due_date": "2024-02-15", "tax_rate": 8.5, "discount_rate": 0.0,
+              "notes": "Invoice for January work", "terms_conditions": "Payment
+              due within 30 days" }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url"
+              >/api/invoices/create-from-time-entries/</span
+            >
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Invoice from Time Entries</h3>
+            <p>
+              Automatically create an invoice from time entries within a date
+              range.
+            </p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "client": 1, "project": 1, "start_date": "2024-01-01",
+              "end_date": "2024-01-31", "issue_date": "2024-02-01", "due_date":
+              "2024-03-01", "tax_rate": 8.5, "discount_rate": 0.0, "notes":
+              "January 2024 work", "terms_conditions": "Payment due within 30
+              days" }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/invoices/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Invoice Details</h3>
+            <p>Get detailed information about a specific invoice.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <span class="endpoint-url">/api/invoices/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Update Invoice</h3>
+            <p>Update an invoice's information.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <span class="endpoint-url">/api/invoices/{id}/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Delete Invoice</h3>
+            <p>Delete an invoice.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/invoices/{id}/send/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Send Invoice</h3>
+            <p>Send an invoice via email to the client.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "email_subject": "Invoice for January 2024", "email_message":
+              "Please find attached invoice for services rendered.",
+              "send_to_client": true, "send_copy_to_user": true }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/invoices/{id}/pdf/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Download Invoice PDF</h3>
+            <p>Download the invoice as a PDF file.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/invoices/{id}/mark-paid/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Mark Invoice as Paid</h3>
+            <p>Mark an invoice as paid.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/invoices/summary/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Invoice Summary</h3>
+            <p>Get summary statistics for invoices.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/invoices/overdue/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Overdue Invoices</h3>
+            <p>Get a list of all overdue invoices.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stripe" class="section">
+        <h2>💳 Stripe Integration</h2>
+        <p>
+          The Stripe integration allows you to accept online payments for
+          invoices.
+        </p>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/stripe/config/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Stripe Configuration</h3>
+            <p>Get Stripe publishable key and configuration.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/stripe/create-payment-intent/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Payment Intent</h3>
+            <p>Create a Stripe payment intent for an invoice.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">{ "invoice_id": 1 }</div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url"
+              >/api/stripe/create-checkout-session/</span
+            >
+          </div>
+          <div class="endpoint-body">
+            <h3>Create Checkout Session</h3>
+            <p>Create a Stripe checkout session for an invoice.</p>
+
+            <h4>Request Body:</h4>
+            <div class="code-block">
+              { "invoice_id": 1, "success_url": "https://yoursite.com/success",
+              "cancel_url": "https://yoursite.com/cancel" }
+            </div>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/stripe/payment-intents/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>List Payment Intents</h3>
+            <p>Get a list of all payment intents for the authenticated user.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="endpoint-url"
+              >/api/stripe/payment-intent-status/{id}/</span
+            >
+          </div>
+          <div class="endpoint-body">
+            <h3>Get Payment Intent Status</h3>
+            <p>Get the status of a specific payment intent.</p>
+            <div class="auth-note">Requires authentication</div>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="endpoint-url">/api/stripe/webhook/</span>
+          </div>
+          <div class="endpoint-body">
+            <h3>Stripe Webhook</h3>
+            <p>
+              Webhook endpoint for Stripe events (payment confirmations, etc.).
+            </p>
+            <div class="auth-note">
+              No authentication required (Stripe signs webhooks)
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // Back to top functionality
+      document
+        .querySelector(".back-to-top")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+    </script>
+  </body>
+</html>

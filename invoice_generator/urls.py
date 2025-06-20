@@ -40,8 +40,13 @@ def root_view(request):
         # Show HTML homepage for web browsers
         return render(request, 'home.html')
 
+def api_docs_view(request):
+    """API documentation view."""
+    return render(request, 'api_docs.html')
+
 urlpatterns = [
     path('', root_view, name='root'),
+    path('api-docs/', api_docs_view, name='api-docs'),
     path('admin/', admin.site.urls),
     
     # JWT Authentication
