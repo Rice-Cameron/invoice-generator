@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from core import views as core_views
 
 # Customize the admin site
 admin.site.site_header = getattr(settings, 'ADMIN_SITE_HEADER', 'Invoice Generator Administration')
@@ -45,7 +46,11 @@ def api_docs_view(request):
     return render(request, 'api_docs.html')
 
 urlpatterns = [
-    path('', root_view, name='root'),
+    path('', root_view, name='home'),
+    path('dashboard/', core_views.dashboard_view, name='dashboard'),
+    path('login/', core_views.login_view, name='login'),
+    path('logout/', core_views.logout_view, name='logout'),
+    path('register/', core_views.register_view, name='register'),
     path('api-docs/', api_docs_view, name='api-docs'),
     path('admin/', admin.site.urls),
     

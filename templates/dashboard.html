@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<div class="header">
+  <div class="container">
+    <h1>Welcome, {{ user.first_name|default:user.username }}!</h1>
+    <p>
+      This is your command center for managing clients, projects, and invoices.
+    </p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="dashboard-grid">
+    <div class="card">
+      <h3>Clients</h3>
+      <p>Manage your client information and billing details.</p>
+      <a href="#" class="btn-card">Manage Clients</a>
+    </div>
+    <div class="card">
+      <h3>Projects</h3>
+      <p>Organize your work by projects and track their status.</p>
+      <a href="#" class="btn-card">Manage Projects</a>
+    </div>
+    <div class="card">
+      <h3>Time Entries</h3>
+      <p>Log your billable hours and track your productivity.</p>
+      <a href="#" class="btn-card">Log Time</a>
+    </div>
+    <div class="card">
+      <h3>Invoices</h3>
+      <p>Create, send, and manage professional invoices.</p>
+      <a href="#" class="btn-card">Create Invoice</a>
+    </div>
+    <div class="card card-full">
+      <h3>Recent Activity</h3>
+      <p>This area will show your recent invoices and time entries.</p>
+      <!-- Placeholder for recent activity -->
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_css %}
+<style>
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 2.5rem;
+  }
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  .card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  .card h3 {
+    color: #667eea;
+    margin-bottom: 1rem;
+  }
+  .btn-card {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+  .btn-card:hover {
+    background: #5a6fd8;
+  }
+  .card-full {
+    grid-column: 1 / -1;
+  }
+</style>
+{% endblock %}
