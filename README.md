@@ -86,6 +86,7 @@ A comprehensive Django-based backend service that allows freelancers to manage c
    ```
 
 6. **Access the application**
+   - App: http://localhost:8000/
    - API: http://localhost:8000/api/
    - Admin: http://localhost:8000/admin/
    - API Documentation: http://localhost:8000/api-docs/

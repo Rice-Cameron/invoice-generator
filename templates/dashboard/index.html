@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h1>InvoiceGen</h1>
+        </div>
+        <nav class="nav-menu">
+            <a href="{% url 'dashboard:index' %}" class="active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'dashboard:clients' %}">
+                <i class="fas fa-users"></i>
+                <span>Clients</span>
+            </a>
+            <a href="{% url 'dashboard:projects' %}">
+                <i class="fas fa-project-diagram"></i>
+                <span>Projects</span>
+            </a>
+            <a href="{% url 'dashboard:time_entries' %}">
+                <i class="fas fa-clock"></i>
+                <span>Time Entries</span>
+            </a>
+            <a href="{% url 'dashboard:invoices' %}">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Invoices</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h2>Dashboard</h2>
+            <div class="user-info">
+                <span class="username">{{ user.username }}</span>
+                <button class="btn btn-primary" onclick="location.href='{% url 'dashboard:generate_invoice' %}'">
+                    Generate Invoice
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Clients</h3>
+                <p class="stat-number">{{ total_clients }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Projects</h3>
+                <p class="stat-number">{{ active_projects }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Hours</h3>
+                <p class="stat-number">{{ total_hours }}h</p>
+            </div>
+            <div class="stat-card">
+                <h3>Recent Invoices</h3>
+                <p class="stat-number">{{ recent_invoices }}</p>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div class="activity-list">
+                {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <span class="activity-type">{{ activity.type }}</span>
+                    <span class="activity-text">{{ activity.text }}</span>
+                    <span class="activity-time">{{ activity.time }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

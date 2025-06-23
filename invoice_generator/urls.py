@@ -47,7 +47,7 @@ def api_docs_view(request):
 
 urlpatterns = [
     path('', root_view, name='home'),
-    path('dashboard/', core_views.dashboard_view, name='dashboard'),
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('login/', core_views.login_view, name='login'),
     path('logout/', core_views.logout_view, name='logout'),
     path('register/', core_views.register_view, name='register'),

@@ -8,12 +8,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.db.models import Sum, Count
+from django.utils import timezone
+from datetime import timedelta
 from .serializers import (
     UserRegistrationSerializer,
     UserProfileSerializer,
     ChangePasswordSerializer
 )
 from .forms import CustomUserCreationForm
+from clients.models import Client
+from projects.models import Project
+from time_entries.models import TimeEntry
+from invoices.models import Invoice
 
 User = get_user_model()
 
@@ -51,7 +58,46 @@ class ChangePasswordView(APIView):
             user.set_password(serializer.validated_data['new_password'])
             user.save()
             return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@login_required
+@permission_classes([IsAuthenticated])
+def dashboard_view(request):
+    """
+    Dashboard view that shows user's clients, projects, time entries, and invoices.
+    """
+    # Get user's data
+    user = request.user
+    
+    # Get statistics
+    total_clients = Client.objects.filter(user=user).count()
+    active_projects = Project.objects.filter(user=user, is_active=True).count()
+    
+    # Calculate total hours
+    time_entries = TimeEntry.objects.filter(user=user)
+    total_hours = time_entries.aggregate(Sum('hours'))['hours__sum'] or 0
+    
+    # Get recent invoices
+    recent_invoices = Invoice.objects.filter(user=user).order_by('-created_at')[:5]
+    
+    # Get recent activities
+    recent_activities = []
+    for invoice in recent_invoices:
+        recent_activities.append({
+            'type': 'invoice',
+            'text': f'Created invoice #{invoice.number}',
+            'time': invoice.created_at.strftime('%b %d, %Y')
+        })
+    
+    context = {
+        'total_clients': total_clients,
+        'active_projects': active_projects,
+        'total_hours': round(total_hours, 2),
+        'recent_invoices': len(recent_invoices),
+        'recent_activities': recent_activities,
+        'user': user
+    }
+    
+    return render(request, 'dashboard/index.html', context)
 
 
 @api_view(['GET'])
@@ -120,26 +166,46 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful. Welcome!")
-            return redirect('dashboard')
+            return redirect('dashboard:index')  # Use the full URL name with namespace
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.cache import never_cache
+from django.middleware.csrf import get_token
+
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
 def login_view(request):
+    # Generate a new CSRF token for each request
+    csrf_token = get_token(request)
+    
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
             messages.success(request, f"Welcome back, {user.username}!")
-            return redirect('dashboard')
+            return redirect('dashboard:index')
         else:
             messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+    
+    # Add security headers
+    response = render(request, 'login.html', {
+        'form': form,
+        'csrf_token': csrf_token
+    })
+    response['X-Content-Type-Options'] = 'nosniff'
+    response['X-Frame-Options'] = 'DENY'
+    response['X-XSS-Protection'] = '1; mode=block'
+    return response
 
 def logout_view(request):
     logout(request)
